@@ -1,0 +1,52 @@
+
+spring:
+  application:
+    name: ms-gateway
+
+# Routes     
+  cloud:
+    gateway:
+      routes:
+      
+        - id: ms-creature
+          uri: lb://MS-CREATURE
+          predicates:
+            - Path=/api/v1/creatures/**  
+      
+        - id: ms-creature-swagger
+          uri: lb://MS-CREATURE
+          predicates:
+            - Path=/creatures/**
+          filters:
+            - RewritePath=/(?<base>.*?)/(?<path>.*), /$\{path}
+                
+        - id: ms-area   
+          uri: lb://MS-AREA
+          predicates:
+            - Path=/api/v1/areas/**
+          
+        - id: ms-area-swagger
+          uri: lb://MS-AREA
+          predicates:
+            - Path=/areas/**
+          filters:
+            - RewritePath=/(?<base>.*?)/(?<path>.*), /$\{path}
+                
+# Upper Dropdown for selecting API             
+springdoc:
+  swagger-ui:
+    urls:
+      - name: creatures
+        url: /creatures/v3/api-docs
+      - name: areas
+        url: /areas/v3/api-docs
+                    
+# Eureka discovery service            
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+    preferIpAddress: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ 
+            
