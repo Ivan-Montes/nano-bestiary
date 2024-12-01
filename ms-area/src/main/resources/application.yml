@@ -1,0 +1,124 @@
+spring:
+  application:
+    name: ms-area
+  config:
+    import: optional:file:.env[.properties]
+#  cloud:
+#    refresh:
+#      enabled: false
+           
+  data:
+    mongodb:
+      uri: mongodb://${spring.data.mongodb.user}:${spring.data.mongodb.password}@${spring.data.mongodb.host}:${spring.data.mongodb.port}/mongo-write-db?authSource=admin
+      host: localhost
+      port: 27018
+      user: sa
+      password: ${MONGODB_PASS_WRITE:invalidPassword}
+    redis:
+      database: 0
+      host: localhost
+      port: 6380
+      password: ${REDISDB_PASS:invalidPassword}
+      timeout: 60000  
+      repositories:
+        enabled: false  
+  r2dbc:
+    url: r2dbc:${spring.r2dbc.driver}://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+    username: root
+    password: ${SQLDB_PASS}
+    database: areaReadDb
+    host: localhost
+    port: 5433
+    driver: postgresql
+    
+  kafka:
+    producer:
+      bootstrap-servers: localhost:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      transaction-id-prefix: tx-${eureka.instance.instance-id}-
+      properties:
+        enable:
+          idempotence: true
+        cleanup:
+          policy: compact
+        acks: all
+        retries: 10
+        retry:
+          backoff:
+            ms: 1000
+    consumer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        isolation:
+          level: read_committed
+        spring:
+           json:
+             trusted:
+               packages: '*'    
+  
+  rsocket:
+    server:
+      port: ${RSOCKET.PORT:0}
+      
+# JWT Server conf for client
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000  
+               
+server:
+  port: ${SERVER_PORT:0}
+
+properties:
+  uri:
+    endpointUri: "/api/v1/areas"
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+    preferIpAddress: true
+    metadata-map:
+      rsocketPort: ${spring.rsocket.server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/ 
+            
+# Logging para Spring Data y r2dbc
+logging:
+  level:
+    io:
+      #r2dbc: DEBUG
+
+# Enable /actuator/info
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: info, health, metrics
+ 
+  endpoint:
+    health:
+      probes:
+        enabled: true        
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true  
+             
+# Basic data for /actuator/info
+info:
+  app:
+    name: ${spring.application.name}
+    version: 1.0.0 
+    profile: default    
+
+       
