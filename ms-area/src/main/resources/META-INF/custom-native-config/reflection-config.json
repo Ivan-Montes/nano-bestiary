@@ -1,0 +1,31 @@
+[
+  {
+    "name": "com.mongodb.WriteConcern",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true,
+    "allDeclaredFields": true,
+    "allPublicFields": true,
+    "unsafeAllocated": true,    
+    "allowUnsafeAccess": true
+  },
+ {
+  "name":"dev.ime.infrastructure.entity.CreatureRedisEntity",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name":"dev.ime.application.dto.PaginationDto",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ },
+ {
+  "name":"dev.ime.application.dto.ErrorResponse",
+  "allDeclaredConstructors": true,
+  "allDeclaredMethods": true,
+  "allDeclaredFields": true
+ }
+]

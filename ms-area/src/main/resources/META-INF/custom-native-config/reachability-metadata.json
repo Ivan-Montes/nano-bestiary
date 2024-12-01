@@ -1,0 +1,14 @@
+{
+  "reflection": [
+   {
+      "type": "com.mongodb.WriteConcern",
+  	  "allDeclaredFields": true,
+      "allPublicFields": true,
+  	  "unsafeAllocated": true,
+      "fields": [{"name": "ACKNOWLEDGED", "allowUnsafeAccess": true}]
+    }
+  ],
+  "resources": [],
+  "bundles": [],
+  "jni": []
+}
