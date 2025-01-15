@@ -3,14 +3,14 @@
 
 Microservices development for managing your list of preferred mythical beasts. This multimodule Maven project is built with Reactive Programming, Hexagonal Arch, CQRS, Event Sourcing, and Kafka for synchronizing databases. [RSocket](https://rsocket.io/) for communication between microservices and Redis to store relevant information from other components.
 
-:rotating_light::no_entry:** IN CONSTRUCCTION**
+**Components** :rotating_light::no_entry: **IN CONSTRUCCTION**
 - [Kafka](https://kafka.apache.org/) [9092] + [9093] 
 - [Kafka-UI](https://docs.kafka-ui.provectus.io/) [8081]
 - Eureka server as service registry and discovery service [8761]
 - API Gateway with centralized [OpenApi Swagger-UI](https://swagger.io/) [8080] 
 - REST API ms-area with [OpenApi Swagger-UI](https://swagger.io/) [0]
 - REST API ms-creature with [OpenApi Swagger-UI](https://swagger.io/) [0]
-- REST API ms-oauth2 with [OpenApi Swagger-UI](https://swagger.io/) working as JWT Token Authorization Server [9000]
+- REST API oauth2-server with [OpenApi Swagger-UI](https://swagger.io/) working as JWT Token Authorization Server [9000]
 
 ```mermaid 
  
@@ -127,14 +127,24 @@ In this context, unexpected behavior may occur due to the different network sett
 
     http://localhost:${port}/swagger-ui.html.
   
-API Rest Endpoints have dynamic ports but Api Gateway responds on 8080 port, so you could use a program like SoapUI or Postman and call them with the following nomenclature http://${hostname}:8080/api/v1/${entity}. For instance:
+API Rest Endpoints have dynamic ports but Api Gateway responds on 8080 port, so you could use a program like [SoapUI](https://www.soapui.org/) or [curl](https://curl.se/) and call them with the following nomenclature http://${hostname}:8080/api/v1/${entity}. For instance:
 
 ```
-    ** Get a List of areas **
-		http://localhost:8080/api/v1/areas
+    ** Get a List of Area entities **
+    curl -v http://localhost:8080/api/v1/areas
 
-	**  Get a Creature according to an Id **
-		http://localhost:8080/api/v1/creatures/22000000-0000-0000-0000-000000000003
+    ** Get a Creature according to an Id **
+    curl -v http://localhost:8080/api/v1/creatures/22000000-0000-0000-0000-000000000003
+    
+    ** Create Area **
+    curl -v -H "Content-Type: application/json" -d '{"areaName":"Delfos"}' http://localhost:8080/api/v1/areas
+    
+    ** Update Creature **
+    curl -v -X "PUT" -H "Content-Type: application/json" -d '{"creatureName":"Harpy", "creatureDescription":"half-human and half-bird", "areaId":"11000000-0000-0000-0000-000000000001"}' http://localhost:8080/api/v1/creatures/22000000-0000-0000-0000-000000000008
+    
+    ** Delete a Creature according to an Id **
+    curl -v -X "DELETE" http://localhost:8080/api/v1/creatures/22000000-0000-0000-0000-000000000005
+    
 ```
    
 The initial data load is performed by the kafka-data-init microservice. It uses Kafka to publish events, which the other microservices then use to update their databases.    
@@ -143,16 +153,17 @@ The initial data load is performed by the kafka-data-init microservice. It uses 
 
     http://localhost:8081
 
-A good way for checking the JWT generation and validation flow, is to review **[this article](https://adictosaltrabajo.com/2023/06/29/securizacion-aplicacion-oauth-2-spring-authorization-server-spring-resource-server/)**. A key difference in my development is that you can register a user using the same microservice at **http://localhost:9000/register**. Here is an example of the info you need to send:
+A good way for checking the JWT generation and validation flow, is to review **[this article](https://adictosaltrabajo.com/2023/06/29/securizacion-aplicacion-oauth-2-spring-authorization-server-spring-resource-server/)**. A key difference in my development is that you can register a user using the same microservice oauth2-server at **http://localhost:9000/register**. Here is an example of the info you need to send:
 
 ```
 {
-	"name":"Nico",	
-	"lastname":"Macguffin",	
-	"email":"nMacguffin@dom.eu",
-	"password":"passpasspass"
+  "name":"Nico",	
+  "lastname":"Macguffin",	
+  "email":"nicomacguffin@dom.eu",
+  "password":"passpasspass"
 }
 ```
+On the other hand, the protected URL that requires JWT is waiting in the rest of microservices at http://{host}:{port}/actuator/metrics
 
 If you want to test the project in a Kubernetes environment, you can use the contents of k8s-manifest folder. The manifests are configured for development profile, so you need your IDE to deploy the microservice infrastructure. You can run all manifest files with:
 
