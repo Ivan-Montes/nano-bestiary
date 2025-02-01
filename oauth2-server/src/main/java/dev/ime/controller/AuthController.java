@@ -3,8 +3,10 @@ package dev.ime.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.ime.exception.EmptyResponseException;
@@ -31,8 +33,14 @@ public class AuthController {
 				.ok(authService.register(registerRequestDto)
 						.orElseThrow( () -> new EmptyResponseException(Map.of(
 								GlobalConstants.USER_CAT, GlobalConstants.MSG_NODATA
-            ))));	
-		
+            ))));		
 	}
-	
+
+    @GetMapping("/callback")
+    public String handleCallback(@RequestParam("code") String authorizationCode, 
+                                  @RequestParam String state) {
+    	
+        return "## Authorization code: " + authorizationCode + ", ## State: " + state;
+        
+    }	
 }
