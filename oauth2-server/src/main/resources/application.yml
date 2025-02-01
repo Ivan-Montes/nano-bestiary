@@ -29,8 +29,8 @@ properties:
       issuer: http://localhost:${server.port}
   oauth2:
     clientId: client
-    clientSecret: secret
-    redirectUri: https://oauthdebugger.com/debug
+    clientSecret: ${OAUTH2_CLIENTSECRET}
+    redirectUri: http://localhost:9000/callback
             
 server:
   port: ${SERVER_PORT:9000}
