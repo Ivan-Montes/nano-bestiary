@@ -153,17 +153,40 @@ The initial data load is performed by the kafka-data-init microservice. It uses 
 
     http://localhost:8081
 
-A good way for checking the JWT generation and validation flow, is to review **[this article](https://adictosaltrabajo.com/2023/06/29/securizacion-aplicacion-oauth-2-spring-authorization-server-spring-resource-server/)**. A key difference in my development is that you can register a user using the same microservice oauth2-server at **http://localhost:9000/register**. Here is an example of the info you need to send:
+A good way for checking the JWT generation and validation flow, is reading [this](https://adictosaltrabajo.com/2023/06/29/securizacion-aplicacion-oauth-2-spring-authorization-server-spring-resource-server/) and following these steps:
+- First you should register an user using the method POST and the URL `http://localhost:9000/register`. Here is an example of the info you need to send:
 
 ```
 {
-  "name":"Nico",	
-  "lastname":"Macguffin",	
-  "email":"nicomacguffin@dom.eu",
+  "name":"Marco",	
+  "lastname":"Polo",	
+  "email":"marcopolo@venice.it",
   "password":"passpasspass"
 }
 ```
-On the other hand, the protected URL that requires JWT is waiting in the rest of microservices at http://{host}:{port}/actuator/metrics
+- Next, since form-based login authorization is active, we need to use a browser. Navigate to `http://localhost:9000/login` and use the credentials you have just created. Ignore any NoResourceFoundException error.
+- Then we will request the authorization code with the same browser. The authorization server will respond with a code, which the client can exchange for tokens over a secure channel. 
+
+```
+http://localhost:9000/oauth2/authorize
+?client_id=client
+&redirect_uri=http://localhost:9000/callback
+&scope=openid
+&response_type=code
+&response_mode=query
+&state=k13gsri3gw
+&nonce=njumydikqj
+```
+
+- We use the POST method to request our JWT token sending the authorization code and the rest of parameters
+
+<img src="./src/main/resources/static/images/request_token_conf.png" style="width: 800px; max-width: 1024px; flex-grow: 1;" />
+
+&nbsp;
+
+- Now we can use the retrieved JWT token to reach the unique protected URL <u>in the rest of microservices</u> at *http://{host}:{port}/actuator/metrics*
+
+This project has my own profile of [SoapUI](https://www.soapui.org/) with the endpoints configured. Everything is in the file Proy-nano-bestiary-soapui-project.xml at the root folder.
 
 If you want to test the project in a Kubernetes environment, you can use the contents of k8s-manifest folder. The manifests are configured for development profile, so you need your IDE to deploy the microservice infrastructure. You can run all manifest files with:
 
