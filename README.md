@@ -3,7 +3,7 @@
 
 Microservices development for managing your list of preferred mythical beasts. This multimodule Maven project is built with Reactive Programming, Hexagonal Arch, CQRS, Event Sourcing, and Kafka for synchronizing databases. [RSocket](https://rsocket.io/) for communication between microservices and Redis to store relevant information from other components.
 
-**Components** :rotating_light::no_entry: **IN CONSTRUCCTION**
+**Components**
 - [Kafka](https://kafka.apache.org/) [9092] + [9093] 
 - [Kafka-UI](https://docs.kafka-ui.provectus.io/) [8081]
 - Eureka server as service registry and discovery service [8761]
